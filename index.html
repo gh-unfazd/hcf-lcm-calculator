@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hcf & lcm calculator</title>
+    <style>
+        @font-face {
+            font-family: 'heavitas';
+            src: url(heavitas.ttf);
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container {
+            background: #222;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+            box-sizing: border-box;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+            font-family: 'heavitas';
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            color: #555;
+            font-family: 'heavitas';
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        input[type="number"] {
+            flex: 1;
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            font-family: 'heavitas';
+            background: #333;
+            color: #fff;
+        }
+        .remove-button {
+            background: #27233A;
+            color: #fff;
+            border: none;
+            padding: 5px;
+            border-radius: 25%;
+            cursor: pointer;
+            font-size: 14px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'heavitas';
+            transition: transform, background 0.2s ease;
+        }
+        .remove-button:hover {
+            transform: scale(1.025);
+        }
+        .result {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            color: #333;
+            font-family: 'heavitas';
+            transition: transform 0.2s ease;
+        }
+        .result:hover {
+        	transform: scale(1.025);
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-family: 'heavitas';
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            font-family: 'heavitas';
+            transition: transform 0.2s ease;
+        }
+        button:hover {
+            background: #0056b3;
+            transform: scale(1.025);
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+            .container {
+                padding: 15px;
+            }
+            input[type="number"] {
+                padding: 8px;
+            }
+            .remove-button {
+                padding: 3px;
+                font-size: 12px;
+                width: 25px;
+                height: 25px;
+            }
+            button {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>hcf & lcm calculator</h1>
+        <label for="numbers">enter up to 10 numbers:</label>
+        <div id="inputs">
+            <div class="input-group">
+                <input type="number" class="num-input" placeholder="number 1" required>
+                <button class="remove-button" onclick="removeInput(this)">x</button>
+            </div>
+            <div class="input-group">
+                <input type="number" class="num-input" placeholder="number 2" required>
+                <button class="remove-button" onclick="removeInput(this)">x</button>
+            </div>
+        </div>
+        <div class="buttons">
+            <button onclick="addInput()">add more input</button>
+            <button onclick="calculate()">calculate hcf & lcm</button>
+        </div>
+        <div class="result" id="hcf-result">hcf: </div>
+        <div class="result" id="lcm-result">lcm: </div>
+    </div>
+
+    <script>
+        let inputCount = 2;
+
+        // Function to add more input fields for numbers
+        function addInput() {
+            if (inputCount < 10) {
+                const inputsDiv = document.getElementById("inputs");
+                const newInputGroup = document.createElement("div");
+                newInputGroup.className = "input-group";
+
+                const newInput = document.createElement("input");
+                newInput.type = "number";
+                newInput.className = "num-input";
+                newInput.placeholder = `Number ${inputCount + 1}`;
+                newInput.required = true;
+
+                const removeButton = document.createElement("button");
+                removeButton.className = "remove-button";
+                removeButton.innerText = "x";
+                removeButton.onclick = function() { removeInput(removeButton); };
+
+                newInputGroup.appendChild(newInput);
+                newInputGroup.appendChild(removeButton);
+                inputsDiv.appendChild(newInputGroup);
+
+                inputCount++;
+            } else {
+                alert("you can only add up to 10 numbers.");
+            }
+        }
+
+        // Function to remove an input field
+        function removeInput(button) {
+            const inputGroup = button.parentElement;
+            inputGroup.remove();
+            inputCount--;
+        }
+
+        // Function to calculate HCF
+        function hcf(a, b) {
+            return !b ? a : hcf(b, a % b);
+        }
+
+        // Function to calculate LCM
+        function lcm(a, b) {
+            return (a * b) / hcf(a, b);
+        }
+
+        // Function to calculate the HCF and LCM of given numbers
+        function calculate() {
+            const inputs = document.querySelectorAll(".num-input");
+            let numbers = Array.from(inputs).map(input => Number(input.value));
+            
+            if (numbers.some(num => isNaN(num) || num <= 0)) {
+                alert("please enter valid positive numbers.");
+                return;
+            }
+
+            let hcfResult = numbers.reduce((acc, num) => hcf(acc, num));
+            let lcmResult = numbers.reduce((acc, num) => lcm(acc, num));
+
+            document.getElementById("hcf-result").innerText = `HCF: ${hcfResult}`;
+            document.getElementById("lcm-result").innerText = `LCM: ${lcmResult}`;
+        }
+    </script>
+</body>
+</html>
